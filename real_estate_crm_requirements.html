@@ -1,0 +1,224 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.section { margin-bottom: 2rem; }
+.section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px; cursor: pointer; transition: border-color 0.15s; }
+.card:hover { border-color: var(--color-border-secondary); }
+.card.active { border-color: var(--color-border-info); }
+.card-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-size: 14px; }
+.card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.card-sub { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; margin-top: 8px; }
+.badge-blue { background: var(--color-background-info); color: var(--color-text-info); }
+.badge-green { background: var(--color-background-success); color: var(--color-text-success); }
+.badge-amber { background: var(--color-background-warning); color: var(--color-text-warning); }
+.badge-muted { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+.detail-panel { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 16px; margin-top: 12px; display: none; }
+.detail-panel.open { display: block; }
+.detail-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.sub-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 6px; }
+.item-list { list-style: none; }
+.item-list li { font-size: 13px; color: var(--color-text-primary); padding: 4px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+.item-list li:last-child { border-bottom: none; }
+.dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+.dot-blue { background: #378ADD; }
+.dot-green { background: #639922; }
+.phases { display: flex; gap: 8px; flex-wrap: wrap; }
+.phase { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 8px; padding: 10px 14px; flex: 1; min-width: 100px; }
+.phase-num { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 4px; }
+.phase-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.phase-items { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+.stack-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.tech-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); }
+.optional-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.opt-item { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 8px; padding: 10px 12px; }
+.opt-item-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.opt-item-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.close-hint { font-size: 12px; color: var(--color-text-tertiary); text-align: right; margin-top: 8px; cursor: pointer; }
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">Real Estate CRM — full requirements and task breakdown by module, development phase, and tech stack</h2>
+
+<div style="padding: 1rem 0;">
+
+<div class="section">
+  <div class="section-title">Core modules — click to expand</div>
+  <div class="grid" id="module-grid"></div>
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-title" id="dp-title"></div>
+    <div class="two-col">
+      <div>
+        <div class="sub-label">Requirements</div>
+        <ul class="item-list" id="dp-reqs"></ul>
+      </div>
+      <div>
+        <div class="sub-label">Tasks</div>
+        <ul class="item-list" id="dp-tasks"></ul>
+      </div>
+    </div>
+    <div class="close-hint" onclick="closePanel()">Collapse ×</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Development phases</div>
+  <div class="phases" id="phases-container"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Technical stack</div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;" id="tech-container"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Optional advanced features</div>
+  <div class="optional-grid" id="optional-container"></div>
+</div>
+
+</div>
+
+<script>
+const modules = [
+  {
+    icon: "👤", color: "#E6F1FB", iconColor: "#185FA5",
+    title: "Lead management", sub: "Capture, track & assign leads", badge: "Core", badgeClass: "badge-blue",
+    reqs: ["Capture leads from website, ads, calls, referrals", "Store name, phone, email, budget, preferences", "Status tracking: New → Contacted → Qualified → Closed / Lost", "Lead assignment to agents", "Follow-up reminders"],
+    tasks: ["Design lead database schema", "Build lead entry forms (manual + auto capture)", "Implement lead status workflow", "Create lead assignment logic", "Add reminder/notification system"]
+  },
+  {
+    icon: "🏠", color: "#EAF3DE", iconColor: "#3B6D11",
+    title: "Property management", sub: "Listings with images & maps", badge: "Core", badgeClass: "badge-blue",
+    reqs: ["Add/manage residential and commercial listings", "Track location, price, size, amenities, images", "Property availability status", "Link properties with agents"],
+    tasks: ["Create property CRUD", "Image upload & storage system", "Property filtering & search", "Map integration (Google Maps or similar)"]
+  },
+  {
+    icon: "🤝", color: "#E1F5EE", iconColor: "#0F6E56",
+    title: "Client management", sub: "Buyer & seller profiles", badge: "Core", badgeClass: "badge-blue",
+    reqs: ["Maintain buyer/seller profiles", "Track interactions and preferences", "Client history: visited properties, inquiries"],
+    tasks: ["Client profile module", "Interaction logging system", "Link clients to leads & deals"]
+  },
+  {
+    icon: "💼", color: "#FAEEDA", iconColor: "#854F0B",
+    title: "Deal & transactions", sub: "Pipeline to commission", badge: "Core", badgeClass: "badge-blue",
+    reqs: ["Track deals from inquiry to closure", "Deal stages: Negotiation → Agreement → Closed", "Commission tracking", "Document management (agreements, contracts)"],
+    tasks: ["Deal pipeline UI (Kanban style)", "Commission calculation logic", "File upload & document storage", "Deal reporting system"]
+  },
+  {
+    icon: "📩", color: "#FBEAF0", iconColor: "#993556",
+    title: "Communication", sub: "Call, SMS, email & follow-ups", badge: "Core", badgeClass: "badge-blue",
+    reqs: ["Call, SMS, email tracking", "Automated follow-ups", "Notifications for pending tasks"],
+    tasks: ["Integrate SMS/email APIs", "Build activity timeline", "Create follow-up scheduler", "Notification engine (email/push)"]
+  },
+  {
+    icon: "👥", color: "#EEEDFE", iconColor: "#534AB7",
+    title: "Agent management", sub: "Roles, access & performance", badge: "Core", badgeClass: "badge-blue",
+    reqs: ["Role-based access: Admin, Agent, Manager", "Agent performance tracking", "Task assignment"],
+    tasks: ["Authentication & authorization system", "Role-based permissions", "Agent dashboard"]
+  },
+  {
+    icon: "📊", color: "#F1EFE8", iconColor: "#5F5E5A",
+    title: "Reports & analytics", sub: "KPIs, revenue & exports", badge: "Analytics", badgeClass: "badge-muted",
+    reqs: ["Sales reports", "Lead conversion rates", "Agent performance tracking", "Revenue tracking"],
+    tasks: ["Dashboard with charts (monthly sales, leads)", "Export reports (Excel/PDF)", "KPI calculations"]
+  },
+  {
+    icon: "🔗", color: "#FAECE7", iconColor: "#993C1D",
+    title: "Integrations", sub: "APIs, portals & webhooks", badge: "Advanced", badgeClass: "badge-amber",
+    reqs: ["Website integration (lead capture forms)", "Third-party property listing portals", "Optional CRM integrations"],
+    tasks: ["API development (REST/GraphQL)", "Webhook support", "Third-party integrations"]
+  },
+];
+
+const phases = [
+  { num: "Phase 1", title: "Planning", items: "Requirement gathering\nWireframing (UI/UX)\nDatabase design" },
+  { num: "Phase 2", title: "Core dev", items: "Auth system\nLead + Property modules\nClient & Deal modules" },
+  { num: "Phase 3", title: "Advanced", items: "Notifications\nReports & analytics\nIntegrations" },
+  { num: "Phase 4", title: "Testing", items: "Unit testing\nUser acceptance\nBug fixing" },
+  { num: "Phase 5", title: "Deployment", items: "Server setup\nCI/CD pipeline\nProduction release" },
+];
+
+const techStack = [
+  { label: "Backend", items: ["Node.js", "Django", "Laravel"] },
+  { label: "Frontend", items: ["React", "Angular", "Vue"] },
+  { label: "Database", items: ["MySQL", "PostgreSQL", "MongoDB"] },
+  { label: "Cloud", items: ["AWS", "Azure", "GCP"] },
+  { label: "Security", items: ["Data encryption", "RBAC", "Backup system"] },
+];
+
+const optional = [
+  { title: "AI lead scoring", sub: "Auto-prioritise leads" },
+  { title: "Recommendation engine", sub: "Property suggestions" },
+  { title: "Chatbot", sub: "Automated inquiry handling" },
+  { title: "WhatsApp integration", sub: "Real-time messaging" },
+  { title: "Geo-location", sub: "Location-based property suggestions" },
+];
+
+let activeCard = null;
+
+function closePanel() {
+  document.getElementById('detail-panel').classList.remove('open');
+  if (activeCard !== null) {
+    document.querySelectorAll('.card')[activeCard].classList.remove('active');
+    activeCard = null;
+  }
+}
+
+function openModule(i) {
+  if (activeCard === i) { closePanel(); return; }
+  if (activeCard !== null) document.querySelectorAll('.card')[activeCard].classList.remove('active');
+  activeCard = i;
+  document.querySelectorAll('.card')[i].classList.add('active');
+  const m = modules[i];
+  document.getElementById('dp-title').textContent = m.title;
+  const reqList = document.getElementById('dp-reqs');
+  reqList.innerHTML = m.reqs.map(r => `<li><span class="dot dot-blue"></span>${r}</li>`).join('');
+  const taskList = document.getElementById('dp-tasks');
+  taskList.innerHTML = m.tasks.map(t => `<li><span class="dot dot-green"></span>${t}</li>`).join('');
+  const panel = document.getElementById('detail-panel');
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+const grid = document.getElementById('module-grid');
+modules.forEach((m, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.onclick = () => openModule(i);
+  card.innerHTML = `
+    <div class="card-icon" style="background:${m.color}; color:${m.iconColor}">${m.icon}</div>
+    <div class="card-title">${m.title}</div>
+    <div class="card-sub">${m.sub}</div>
+    <span class="badge ${m.badgeClass}">${m.badge}</span>
+  `;
+  grid.appendChild(card);
+});
+
+const phasesCont = document.getElementById('phases-container');
+phases.forEach(p => {
+  const div = document.createElement('div');
+  div.className = 'phase';
+  div.innerHTML = `<div class="phase-num">${p.num}</div><div class="phase-title">${p.title}</div><div class="phase-items">${p.items.replace(/\n/g, '<br>')}</div>`;
+  phasesCont.appendChild(div);
+});
+
+const techCont = document.getElementById('tech-container');
+techStack.forEach(t => {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.style.cursor = 'default';
+  div.innerHTML = `<div class="sub-label" style="margin-bottom:8px">${t.label}</div><div class="stack-row">${t.items.map(i => `<span class="tech-tag">${i}</span>`).join('')}</div>`;
+  techCont.appendChild(div);
+});
+
+const optCont = document.getElementById('optional-container');
+optional.forEach(o => {
+  const div = document.createElement('div');
+  div.className = 'opt-item';
+  div.innerHTML = `<div class="opt-item-title">${o.title}</div><div class="opt-item-sub">${o.sub}</div>`;
+  optCont.appendChild(div);
+});
+</script>
